@@ -1,6 +1,7 @@
 import express, { Application, Request, Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { userRoutes } from "./modules/user/user.route";
 
 const app: Application = express();
 
@@ -12,6 +13,9 @@ app.use(cookieParser());
 app.get("/", (req: Request, res: Response) => {
   res.json({ message: "Hello World!" });
 });
+
+
+app.use("/api/user", userRoutes);
 
 
 
