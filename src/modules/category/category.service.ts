@@ -25,7 +25,48 @@ const getAllCategoriesFromDB = async () => {
     return result;
 };
 
+const getSingleCategoryFromDB = async (id: string) => {
+    const result = await prisma.category.findUniqueOrThrow({
+        where: { id },
+        include: {
+            gearItems: true,
+        },
+    });
+    return result;
+};
+
+
+const updateCategoryInDB = async (id: string, payload: { name?: string; description?: string }) => {
+    let slug;
+    if (payload.name) {
+        slug = payload.name
+            .toLowerCase()
+            .replace(/ /g, '-')
+            .replace(/[^\w-]+/g, '');
+    }
+
+    const result = await prisma.category.update({
+        where: { id },
+        data: {
+            ...payload,
+            ...(slug && { slug }),
+        },
+    });
+    return result;
+};
+
+
+const deleteCategoryFromDB = async (id: string) => {
+    const result = await prisma.category.delete({
+        where: { id },
+    });
+    return result;
+};
+
 export const CategoryServices = {
     createCategoryInDB,
     getAllCategoriesFromDB,
+    getSingleCategoryFromDB,
+    updateCategoryInDB,
+    deleteCategoryFromDB,
 };
