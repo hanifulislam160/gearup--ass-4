@@ -50,6 +50,10 @@ const registerIntoDB = async (payload: IRegisterUserPayload) => {
 };
 
 const getMeFromDB = async (userId: string) => {
+
+    if (!userId) {
+        throw new Error('User ID is missing or undefined!');
+    }
     const user = await prisma.user.findUniqueOrThrow({
         where: {
             id: userId,
