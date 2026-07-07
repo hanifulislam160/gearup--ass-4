@@ -8,12 +8,12 @@ export const catchAsync = (fn: RequestHandler) => {
       await fn(req, res, next);
     } catch (error) {
       console.log(error);
-      res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-        success: false,
-        message: "Something went wrong",
-        error: (error as Error).message,
-      });
-    //   next(error);
+      // res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      //   success: false,
+      //   message: "Something went wrong",
+      //   error: (error as Error).message,
+      // });
+      next(error);
     }
   };
 };
