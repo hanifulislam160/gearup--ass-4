@@ -49,6 +49,24 @@ const registerIntoDB = async (payload: IRegisterUserPayload) => {
     return result;
 };
 
+const getMeFromDB = async (userId: string) => {
+    const user = await prisma.user.findUniqueOrThrow({
+        where: {
+            id: userId,
+        },
+        omit: {
+            password: true,
+        },
+    });
+
+    if (user.isSuspended) {
+        throw new Error("Your account is currently suspended.");
+    }
+
+    return user;
+};
+
 export const userServices = {
     registerIntoDB,
+    getMeFromDB
 };
