@@ -3,6 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { userRoutes } from "./modules/user/user.route";
 import { authRoutes } from "./modules/auth/auth.route";
+import { notFound } from "./middlewares/notFound";
 
 const app: Application = express();
 
@@ -15,11 +16,11 @@ app.get("/", (req: Request, res: Response) => {
   res.json({ message: "Hello World!" });
 });
 
-
 app.use("/api/user", userRoutes);
 
-app.use('/api/auth', authRoutes);
+app.use("/api/auth", authRoutes);
 
-
+// not found route handler
+app.use(notFound);
 
 export default app;
