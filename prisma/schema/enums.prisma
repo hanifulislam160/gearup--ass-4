@@ -3,3 +3,23 @@ enum Role {
     PROVIDER
     ADMIN
 }
+
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  ON_GOING   
+  COMPLETED  
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum PaymentProvider {
+  STRIPE
+}
