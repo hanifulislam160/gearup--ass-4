@@ -121,7 +121,7 @@ const getSingleGearFromDB = async (id: string) => {
 
 
 const updateGearInDB = async (id: string, providerId: string, payload: Partial<IGearItemPayload>) => {
-    // ১. প্রথমে চেক করুন গিয়ারটি আসলেই আছে কিনা এবং এই প্রোভাইডারের কিনা
+   
     const isGearExist = await prisma.gearItem.findUnique({
         where: { id },
     });
@@ -134,7 +134,6 @@ const updateGearInDB = async (id: string, providerId: string, payload: Partial<I
         throw new Error('You are not authorized to update this gear!');
     }
 
-    // 💡 ২. যদি রিকোয়েস্ট বডিতে categoryId পাঠানো হয়ে থাকে, তবে সেটি ভেরিফাই করুন
     if (payload.categoryId) {
         const isCategoryExist = await prisma.category.findUnique({
             where: { id: payload.categoryId },
@@ -145,7 +144,6 @@ const updateGearInDB = async (id: string, providerId: string, payload: Partial<I
         }
     }
 
-    // ৩. সবকিছু ঠিক থাকলে এবার আপডেট করুন
     const result = await prisma.gearItem.update({
         where: { id },
         data: payload,
