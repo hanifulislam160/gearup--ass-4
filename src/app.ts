@@ -24,15 +24,14 @@ app.use("/api/user", userRoutes);
 
 app.use("/api/auth", authRoutes);
 
-app.use('/api/category', categoryRoutes);
+app.use("/api/category", categoryRoutes);
 
-app.use('/api/gear-items', gearRoutes);
+app.use("/api/gear-items", gearRoutes);
 
-// app.use('/rental-order', rentalOrderRoutes )
+app.use("/api/rental-order", rentalOrderRoutes);
 
 // not found route handler
 app.use(notFound);
-
 
 // global Error handler
 app.use(globalErrorHandler);
