@@ -8,8 +8,9 @@ import { globalErrorHandler } from "./middlewares/globalErrorHandler";
 import { categoryRoutes } from "./modules/category/category.route";
 import { gearRoutes } from "./modules/gear/gear.route";
 import { rentalOrderRoutes } from "./modules/rentalOrder/rentalOrder.route";
-import { PaymentRoutes } from "./modules/payment/payment.route";
+import { paymentRoutes } from "./modules/payment/payment.route";
 import { providerOrderRoutes } from "./modules/providerOrder/providerOrder.route";
+import { adminRoutes } from "./modules/admin/admin.route";
 
 const app: Application = express();
 
@@ -34,7 +35,11 @@ app.use("/api/rental-order", rentalOrderRoutes);
 
 app.use("/api/provider-order", providerOrderRoutes);
 
-app.use("/api/payment", PaymentRoutes);
+app.use("/api/payment", paymentRoutes);
+
+app.use("/api/admin", adminRoutes);
+
+
 
 // not found route handler
 app.use(notFound);

@@ -29,4 +29,4 @@ router.get("/history", auth(), PaymentControllers.getUserPaymentHistory);
 // 4. GET: Show standalone confirmation invoice log entry
 router.get("/:id", auth(), PaymentControllers.getPaymentDetails);
 
-export const PaymentRoutes = router;
+export const paymentRoutes = router;
