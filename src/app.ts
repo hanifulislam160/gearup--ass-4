@@ -12,6 +12,7 @@ import { paymentRoutes } from "./modules/payment/payment.route";
 import { providerOrderRoutes } from "./modules/providerOrder/providerOrder.route";
 import { adminRoutes } from "./modules/admin/admin.route";
 import { reviewRoutes } from "./modules/review/review.route";
+import { profileRoutes } from "./modules/profile/profile.route";
 
 const app: Application = express();
 
@@ -25,6 +26,8 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/api/user", userRoutes);
+
+app.use('/api/profile', profileRoutes);
 
 app.use("/api/auth", authRoutes);
 
