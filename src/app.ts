@@ -7,6 +7,7 @@ import { notFound } from "./middlewares/notFound";
 import { globalErrorHandler } from "./middlewares/globalErrorHandler";
 import { categoryRoutes } from "./modules/category/category.route";
 import { gearRoutes } from "./modules/gear/gear.route";
+import { rentalOrderRoutes } from "./modules/rentalOrder/rentalOrder.route";
 
 const app: Application = express();
 
@@ -26,6 +27,8 @@ app.use("/api/auth", authRoutes);
 app.use('/api/category', categoryRoutes);
 
 app.use('/api/gear-items', gearRoutes);
+
+// app.use('/rental-order', rentalOrderRoutes )
 
 // not found route handler
 app.use(notFound);

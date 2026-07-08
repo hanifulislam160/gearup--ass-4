@@ -29,4 +29,4 @@ router.get(
     RentalOrderControllers.getRentalOrderDetails
 );
 
-export const RentalOrderRoutes = router;
+export const rentalOrderRoutes = router;
