@@ -5,6 +5,7 @@ const updateUserStatusValidationSchema = z.object({
         isSuspended: z.boolean({
             required_error: 'Suspension status boolean is required',
         }),
+        reason: z.string().optional(),
     }),
 });
 

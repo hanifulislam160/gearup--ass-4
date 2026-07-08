@@ -16,8 +16,9 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
 
 const updateUserStatus = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { isSuspended } = req.body;
-    const result = await AdminServices.updateUserStatusInDB(id as string, isSuspended);
+    const { isSuspended, reason } = req.body;
+
+    const result = await AdminServices.updateUserStatusInDB(id as string, isSuspended, reason);
 
     sendResponse(res, {
         success: true,

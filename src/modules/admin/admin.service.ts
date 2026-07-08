@@ -11,7 +11,11 @@ const getAllUsersFromDB = async () => {
 };
 
 // 2. PATCH /api/admin/users/:id
-const updateUserStatusInDB = async (userId: string, isSuspended: boolean) => {
+const updateUserStatusInDB = async (
+    userId: string,
+    isSuspended: boolean,
+    reason?: string
+) => {
     // Check if target user exists before updating status matrices
     const userExists = await prisma.user.findUnique({
         where: { id: userId },
@@ -23,7 +27,14 @@ const updateUserStatusInDB = async (userId: string, isSuspended: boolean) => {
 
     return await prisma.user.update({
         where: { id: userId },
-        data: { isSuspended }, // Adjust field name to match your schema (e.g., status: 'SUSPENDED')
+        data: {
+            isSuspended,
+            //  If user is being unsuspended, we can clear the reason, otherwise save it
+            suspensionReason: isSuspended ? reason : null,
+        },
+        omit: {
+            password: true, // Keeping password hidden on return response
+        }
     });
 };
 
