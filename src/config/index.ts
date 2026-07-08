@@ -12,4 +12,8 @@ export default {
   jwt_access_token_expire_in: process.env.JWT_ACCESS_TOKEN_EXPIRE_IN,
   jwt_refresh_token_expire_in: process.env.JWT_REFRESH_TOKEN_EXPIRE_IN,
   bcrypt_salt_rounds: process.env.BCRYPT_SALT_ROUNDS,
+
+  stripe_secret_key: process.env.STRIPE_SECRET_KEY!,
+  stripe_success_url: process.env.STRIPE_SUCCESS_URL!,
+  stripe_cancel_url: process.env.STRIPE_CANCEL_URL!,
 };
