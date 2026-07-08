@@ -11,6 +11,7 @@ import { rentalOrderRoutes } from "./modules/rentalOrder/rentalOrder.route";
 import { paymentRoutes } from "./modules/payment/payment.route";
 import { providerOrderRoutes } from "./modules/providerOrder/providerOrder.route";
 import { adminRoutes } from "./modules/admin/admin.route";
+import { reviewRoutes } from "./modules/review/review.route";
 
 const app: Application = express();
 
@@ -36,6 +37,8 @@ app.use("/api/rental-order", rentalOrderRoutes);
 app.use("/api/provider-order", providerOrderRoutes);
 
 app.use("/api/payment", paymentRoutes);
+
+app.use("/api/reviews", reviewRoutes);
 
 app.use("/api/admin", adminRoutes);
 
