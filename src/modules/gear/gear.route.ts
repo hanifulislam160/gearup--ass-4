@@ -3,6 +3,7 @@ import { providerGearControllers } from './gear.controller';
 import { validateRequest } from '../../middlewares/validateRequest';
 import { auth } from '../../middlewares/auth';
 import { gearValidations } from './gear.validation';
+import { Role } from '../../../generated/prisma/enums';
 
 const router = Router();
 
@@ -25,8 +26,8 @@ router.get(
 
 
 router.post(
-    '/',
-    auth('PROVIDER'),
+    '/create',
+    auth(Role.PROVIDER),
     validateRequest(gearValidations.createGearValidationSchema),
     providerGearControllers.createGear
 );

@@ -5,6 +5,7 @@ import { sendResponse } from '../../utils/sendResponse';
 import { IGearQueryFilters } from './gear.interface';
 
 const createGear = catchAsync(async (req: Request, res: Response) => {
+    // console.log(req.user);
     const providerId = req.user?.id;
     const result = await providerGearServices.createGearInDB(providerId as string, req.body);
 
