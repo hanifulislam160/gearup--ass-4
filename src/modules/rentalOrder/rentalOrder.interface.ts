@@ -3,4 +3,5 @@ export interface ICreateRentalOrderPayload {
   startDate: string | Date;
   endDate: string | Date;
   totalPrice: number;
+  quantity: number;
 }

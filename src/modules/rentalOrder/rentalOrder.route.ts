@@ -16,7 +16,7 @@ router.post(
 
 // 2. GET: Get user's rental orders
 router.get(
-  "/all-rental-orders",
+  "/all-orders",
   auth(),
   RentalOrderControllers.getUserRentalOrders,
 );

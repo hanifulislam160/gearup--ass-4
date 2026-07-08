@@ -6,7 +6,7 @@ const createRentalOrderInDB = async (
   customerId: string,
   payload: ICreateRentalOrderPayload,
 ) => {
-  // 1. Fetch the gear item from database
+  // 1. Fetch the gear item
   const gearItem = await prisma.gearItem.findUnique({
     where: { id: payload.gearItemId },
   });
@@ -15,35 +15,36 @@ const createRentalOrderInDB = async (
     throw new Error("Gear item not found!");
   }
 
-  // 2. Modified Check: Check stock quantity instead of just the boolean flag
-  if (gearItem.stock <= 0 || !gearItem.isAvailable) {
+  const requestedQuantity = payload.quantity || 1;
+  if (gearItem.stock < requestedQuantity || !gearItem.isAvailable) {
     throw new Error(
-      "This gear item is currently out of stock and not available for rent!",
+      `Insufficient stock! Only ${gearItem.stock} items are available for rent.`,
     );
   }
 
   // 3. Execute database transaction safely
   const result = await prisma.$transaction(async (tx) => {
-    // Create the new rental order record
+    // Create the new rental order record with quantity
     const rentalOrder = await tx.rentalOrder.create({
       data: {
         gearItemId: payload.gearItemId,
         startDate: new Date(payload.startDate),
         endDate: new Date(payload.endDate),
         totalPrice: payload.totalPrice,
+        quantity: requestedQuantity,
         customerId: customerId,
       },
     });
 
-    // Calculate updated stock balance
-    const newStock = gearItem.stock - 1;
+    // dynamic stock calculation
+    const newStock = gearItem.stock - requestedQuantity;
 
-    // 4. Smart Stock Update: Reduce stock by 1, and set isAvailable to false ONLY if stock hits 0
+    // Update gear item stock and availability status
     await tx.gearItem.update({
       where: { id: payload.gearItemId },
       data: {
         stock: newStock,
-        isAvailable: newStock > 0, // Automatically turns false when newStock becomes 0
+        isAvailable: newStock > 0, // Automatically turns false if newStock hits 0
       },
     });
 
