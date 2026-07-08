@@ -33,19 +33,22 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
 });
 
 const refreshToken = catchAsync(async (req: Request, res: Response) => {
-    const token = req.cookies?.refreshToken || req.headers.authorization?.split(' ')[1];
+    const refreshToken = req.cookies.refreshToken;
 
-    if (!token) {
-        throw new Error('Refresh token is missing!');
-    }
+    const { accessToken } = await authServices.refreshToken(refreshToken);
 
-    const result = await authServices.refreshToken(token);
+    res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "none",
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+    });
 
     sendResponse(res, {
         success: true,
         statusCode: 200,
         message: 'Access token generated successfully',
-        data: result,
+        data: { accessToken },
     });
 });
 
