@@ -15,7 +15,7 @@ router.get(
 
 // 2. PATCH: Update specific order state markers
 router.patch(
-  "/orders/:id",
+  "/orders-status/:id",
   auth("PROVIDER"),
   validateRequest(ProviderOrderValidations.updateOrderStatusValidationSchema),
   ProviderOrderControllers.updateProviderOrderStatus,

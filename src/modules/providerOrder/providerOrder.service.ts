@@ -28,12 +28,13 @@ const getProviderIncomingOrdersFromDB = async (providerId: string) => {
 };
 
 // 2. Update order status (CONFIRMED, ON_GOING, COMPLETED)
+
 const updateProviderOrderStatusInDB = async (
   orderId: string,
   providerId: string,
   status: "CONFIRMED" | "ON_GOING" | "COMPLETED" | "CANCELLED",
 ) => {
-  // Verify that this order actually belongs to this provider before updating
+
   const existingOrder = await prisma.rentalOrder.findFirst({
     where: {
       id: orderId,
@@ -49,10 +50,13 @@ const updateProviderOrderStatusInDB = async (
     );
   }
 
-  // Business Logic Map:
-  // confirm -> CONFIRMED
-  // mark picked up -> ON_GOING
-  // mark returned -> COMPLETED
+  
+  if (status === "CONFIRMED" && existingOrder.paymentStatus !== "PAID") {
+    throw new Error(
+      "Cannot confirm order until the customer has completed the payment!",
+    );
+  }
+
   const updatedOrder = await prisma.rentalOrder.update({
     where: { id: orderId },
     data: { status },
@@ -60,6 +64,8 @@ const updateProviderOrderStatusInDB = async (
 
   return updatedOrder;
 };
+
+
 
 export const ProviderOrderServices = {
   getProviderIncomingOrdersFromDB,
