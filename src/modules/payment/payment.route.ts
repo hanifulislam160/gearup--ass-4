@@ -24,7 +24,7 @@ router.post(
 );
 
 // 3. GET: Fetch transaction ledger for active user session
-router.get("/", auth(), PaymentControllers.getUserPaymentHistory);
+router.get("/history", auth(), PaymentControllers.getUserPaymentHistory);
 
 // 4. GET: Show standalone confirmation invoice log entry
 router.get("/:id", auth(), PaymentControllers.getPaymentDetails);

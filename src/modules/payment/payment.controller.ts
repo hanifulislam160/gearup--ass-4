@@ -25,7 +25,7 @@ const confirmPayment = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: "Payment verified and verified successfully",
+    message: "Payment verified successfully",
     data: result,
   });
 });
