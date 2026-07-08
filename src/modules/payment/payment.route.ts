@@ -3,7 +3,7 @@ import { validateRequest } from "../../middlewares/validateRequest";
 import { auth } from "../../middlewares/auth";
 import { PaymentValidations } from "./payment.validation";
 import { PaymentControllers } from "./payment.controller";
-// import { PaymentControllers } from "./payment.controller";
+
 
 const router = Router();
 

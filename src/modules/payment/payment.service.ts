@@ -102,7 +102,7 @@ const confirmPaymentInDB = async (payload: IConfirmPaymentPayload) => {
           amount: rentalOrder.totalPrice,
           transactionId: sessionId,
           method: "CARD", // Maps directly to your schema 'method' field
-          provider: "STRIPE", // Ensure STRIPE is included in your PaymentProvider enum
+          provider: "STRIPE", // Ensure STRIPE is in  cluded in your PaymentProvider enum
           status: "PAID", // Maps directly to your schema 'status' field
           paidAt: new Date(),
         },
