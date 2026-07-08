@@ -19,6 +19,8 @@ const createGear = catchAsync(async (req: Request, res: Response) => {
 
 const getAllGears = catchAsync(async (req: Request, res: Response) => {
 
+
+    console.log(req.query);
     const queryFilters = req.query as IGearQueryFilters;
     const result = await providerGearServices.getAllGearsFromDB(queryFilters);
 

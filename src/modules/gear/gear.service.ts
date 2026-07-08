@@ -14,12 +14,12 @@ const createGearInDB = async (providerId: string, payload: IGearItemPayload) => 
 };
 
 const getAllGearsFromDB = async (query: IGearQueryFilters) => {
-    const { searchTerm, category, brand, availability, minPrice, maxPrice, page = '1', limit = '10' } = query;
+    const { searchTerm, location, category, brand, availability, minPrice, maxPrice, page = '1', limit = '10' } = query;
 
     const andConditions: Prisma.GearItemWhereInput[] = [];
 
-    // search title, description, brand, location
-    if (searchTerm) {
+    // searchTerm title, description, brand, location
+    if (searchTerm && searchTerm.trim() !== '') {
         andConditions.push({
             OR: [
                 { title: { contains: searchTerm, mode: 'insensitive' } },
@@ -30,22 +30,35 @@ const getAllGearsFromDB = async (query: IGearQueryFilters) => {
         });
     }
 
-    // cateogry filter with slug or name
-    if (category) {
+    // category filter
+    if (category && category.trim() !== '') {
         andConditions.push({
             category: {
-                slug: category,
+                OR: [
+                    { id: category },
+                    { slug: category.toLowerCase() },
+                ],
             },
         });
     }
 
-    if (brand) {
+    // brand filter
+    if (brand && brand.trim() !== '') {
         andConditions.push({
             brand: { equals: brand, mode: 'insensitive' },
         });
     }
 
-    if (availability) {
+    // location filter
+    if (location && location.trim() !== '') {
+        andConditions.push({
+            location: { equals: location, mode: 'insensitive' },
+        });
+    }
+
+
+    //  availability filter
+    if (availability && (availability === 'true' || availability === 'false')) {
         andConditions.push({
             isAvailable: availability === 'true',
         });
@@ -53,19 +66,21 @@ const getAllGearsFromDB = async (query: IGearQueryFilters) => {
 
     // price range filter
     if (minPrice || maxPrice) {
-        andConditions.push({
-            pricePerDay: {
-                gte: minPrice ? parseFloat(minPrice) : undefined,
-                lte: maxPrice ? parseFloat(maxPrice) : undefined,
-            },
-        });
+        const priceFilter: Prisma.FloatFilter = {};
+        if (minPrice && !isNaN(parseFloat(minPrice))) priceFilter.gte = parseFloat(minPrice);
+        if (maxPrice && !isNaN(parseFloat(maxPrice))) priceFilter.lte = parseFloat(maxPrice);
+
+        if (Object.keys(priceFilter).length > 0) {
+            andConditions.push({ pricePerDay: priceFilter });
+        }
     }
+
 
     const whereConditions: Prisma.GearItemWhereInput = andConditions.length > 0 ? { AND: andConditions } : {};
 
     // pagination
-    const currentPage = Number(page);
-    const currentLimit = Number(limit);
+    const currentPage = Math.max(Number(page), 1);
+    const currentLimit = Math.max(Number(limit), 1);
     const skip = (currentPage - 1) * currentLimit;
 
     const result = await prisma.gearItem.findMany({

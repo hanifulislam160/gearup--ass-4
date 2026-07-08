@@ -15,6 +15,7 @@ export interface IGearQueryFilters {
     availability?: 'true' | 'false';
     minPrice?: string;
     maxPrice?: string;
+    location?: string; // 👈 এই ফিল্ডটি যুক্ত করুন, যাতে ?location=Mirpur কুয়েরিটি টাইপ-সেফ হয়
     page?: string;
     limit?: string;
 }

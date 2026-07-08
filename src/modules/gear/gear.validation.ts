@@ -30,12 +30,12 @@ const getAllGearQuerySchema = z.object({
         searchTerm: z.string().optional(),
         category: z.string().optional(),
         brand: z.string().optional(),
-        availability: z.enum(['true', 'false']).optional(),
+        availability: z.string().optional(),
         minPrice: z.string().optional(),
         maxPrice: z.string().optional(),
         page: z.string().optional(),
         limit: z.string().optional(),
-    }),
+    }).passthrough()
 });
 
 export const gearValidations = {

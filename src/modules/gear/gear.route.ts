@@ -10,7 +10,7 @@ const router = Router();
 // I need before public route
 
 router.get(
-    '/',
+    '/get-gears',
     validateRequest(gearValidations.getAllGearQuerySchema),
     providerGearControllers.getAllGears
 );
