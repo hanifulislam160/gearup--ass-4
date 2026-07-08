@@ -54,6 +54,8 @@ const getSingleGear = catchAsync(async (req: Request, res: Response) => {
 
 const updateGear = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
+    console.log(req.params);
+    // console.log(req.user);
     const providerId = req.user?.id;
     const result = await providerGearServices.updateGearInDB(id as string, providerId as string, req.body);
 
@@ -68,13 +70,14 @@ const updateGear = catchAsync(async (req: Request, res: Response) => {
 const deleteGear = catchAsync(async (req: Request, res: Response) => {
     const { id } = req.params;
     const providerId = req.user?.id;
-    await providerGearServices.deleteGearFromDB(id as string, providerId as string);
+
+    const result = await providerGearServices.deleteGearFromDB(id as string, providerId as string);
 
     sendResponse(res, {
         success: true,
         statusCode: 200,
         message: 'Gear removed from inventory successfully',
-        data: null,
+        data: result,
     });
 });
 

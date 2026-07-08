@@ -34,7 +34,7 @@ router.post(
 
 router.patch(
     '/:id',
-    auth('PROVIDER'),
+    auth(Role.PROVIDER),
     validateRequest(gearValidations.updateGearValidationSchema),
     providerGearControllers.updateGear
 );
