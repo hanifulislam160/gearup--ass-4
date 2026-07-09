@@ -11,8 +11,8 @@ export const authDocs = {
               type: "object",
               required: ["email", "password"],
               properties: {
-                email: { type: "string", example: "admin@rentnest.com" },
-                password: { type: "string", example: "admin123" },
+                email: { type: "string", example: "customer@gmail.com" },
+                password: { type: "string", example: "123456" },
               },
             },
           },
