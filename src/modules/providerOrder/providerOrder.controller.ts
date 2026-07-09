@@ -6,7 +6,7 @@ import { ProviderOrderServices } from "./providerOrder.service";
 
 const getProviderIncomingOrders = catchAsync(
   async (req: Request, res: Response) => {
-    const providerId = req.user?.id; // Retrieved via auth middleware session payload
+    const providerId = req.user?.id;
     const result = await ProviderOrderServices.getProviderIncomingOrdersFromDB(
       providerId as string,
     );

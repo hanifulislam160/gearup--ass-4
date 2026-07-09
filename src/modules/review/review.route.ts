@@ -7,7 +7,7 @@ import { Role } from '../../../generated/prisma/enums';
 
 const router = Router();
 
-// POST: /api/reviews
+// reviews
 router.post(
     '/create',
     auth(Role.CUSTOMER),
@@ -15,7 +15,7 @@ router.post(
     ReviewControllers.createReview
 );
 
-// read reviews
+// get all reviews for a specific gear item reviews
 router.get('/:gearItemId', ReviewControllers.getGearItemReviews);
 
 export const reviewRoutes = router;

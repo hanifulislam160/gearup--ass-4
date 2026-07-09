@@ -5,7 +5,7 @@ import { ReviewServices } from './review.service';
 import httpStatus from 'http-status';
 
 const createReview = catchAsync(async (req: Request, res: Response) => {
-    const customerId = req.user?.id; // Gathered from authenticated customer session payload
+    const customerId = req.user?.id; 
     const result = await ReviewServices.createReviewInDB(customerId as string, req.body);
 
     sendResponse(res, {

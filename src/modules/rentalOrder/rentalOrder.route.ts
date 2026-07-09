@@ -6,22 +6,18 @@ import { RentalOrderControllers } from "./rentalOrder.controller";
 
 const router = Router();
 
-// 1. POST: Create new rental order
+//Create new rental order
 router.post(
   "/create",
-  auth(), // Requires user authentication
+  auth(),
   validateRequest(RentalOrderValidations.createRentalOrderValidationSchema),
   RentalOrderControllers.createRentalOrder,
 );
 
-// 2. GET: Get user's rental orders
-router.get(
-  "/all-orders",
-  auth(),
-  RentalOrderControllers.getUserRentalOrders,
-);
+// Get user's rental orders
+router.get("/all-orders", auth(), RentalOrderControllers.getUserRentalOrders);
 
-// 3. GET: Get rental order details by ID
+// Get rental order details by ID
 router.get(
   "/:id",
   auth(),

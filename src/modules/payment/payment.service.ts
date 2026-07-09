@@ -7,10 +7,9 @@ import {
 import config from "../../config";
 import { OrderStatus } from "../../../generated/prisma/enums";
 
-// Initialize stripe cleanly
+// Initialize stripe
 const stripe = new Stripe(config.stripe_secret_key);
 
-// 1. Create a payment intent/session for a rental order
 const createPaymentIntentInDB = async (
   customerId: string,
   payload: ICreatePaymentIntentPayload,
@@ -32,7 +31,7 @@ const createPaymentIntentInDB = async (
     throw new Error("This rental order has already been paid for!");
   }
 
-  // Generate Stripe Checkout Session
+  // Stripe Checkout Session
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
     mode: "payment",
@@ -66,7 +65,7 @@ const createPaymentIntentInDB = async (
   };
 };
 
-// 2. Confirm/verify payment (Callback verification method)
+// Confirm/verify payment 
 const confirmPaymentInDB = async (payload: IConfirmPaymentPayload) => {
   const { sessionId } = payload;
 
@@ -75,7 +74,6 @@ const confirmPaymentInDB = async (payload: IConfirmPaymentPayload) => {
 
   if (session.payment_status === "paid") {
     const result = await prisma.$transaction(async (tx) => {
-      // Find the order referencing this transaction id session
       const rentalOrder = await tx.rentalOrder.findUnique({
         where: { transactionId: sessionId },
       });
@@ -86,7 +84,7 @@ const confirmPaymentInDB = async (payload: IConfirmPaymentPayload) => {
         );
       }
 
-      // Update order status fields to success
+      // Update order status
       await tx.rentalOrder.update({
         where: { id: rentalOrder.id },
         data: {
@@ -95,15 +93,14 @@ const confirmPaymentInDB = async (payload: IConfirmPaymentPayload) => {
         },
       });
 
-      //  3. New Entry: Insert permanent audited transaction record into 'Payment' table
       const paymentRecord = await tx.payment.create({
         data: {
           rentalOrderId: rentalOrder.id,
           amount: rentalOrder.totalPrice,
           transactionId: sessionId,
-          method: "CARD", // Maps directly to your schema 'method' field
-          provider: "STRIPE", // Ensure STRIPE is in  cluded in your PaymentProvider enum
-          status: "PAID", // Maps directly to your schema 'status' field
+          method: "CARD", 
+          provider: "STRIPE", 
+          status: "PAID",
           paidAt: new Date(),
         },
       });
@@ -117,18 +114,18 @@ const confirmPaymentInDB = async (payload: IConfirmPaymentPayload) => {
   }
 };
 
-// 3. Get user's payment history (Modified to query from the new Payment table)
+// Get user's payment history
 const getUserPaymentHistoryFromDB = async (customerId: string) => {
   const result = await prisma.payment.findMany({
     where: {
       rentalOrder: {
-        customerId: customerId, // Performs relational lookup filtering through rentalOrder customer fields
+        customerId: customerId,
       },
     },
     include: {
       rentalOrder: {
         include: {
-          gearItem: true, // Pulls gear profile blueprints along with invoice details
+          gearItem: true
         },
       },
     },
@@ -137,7 +134,7 @@ const getUserPaymentHistoryFromDB = async (customerId: string) => {
   return result;
 };
 
-// 4. Get specific payment details from the Payment table
+// Get specific payment details
 const getPaymentDetailsFromDB = async (
   paymentId: string,
   customerId: string,

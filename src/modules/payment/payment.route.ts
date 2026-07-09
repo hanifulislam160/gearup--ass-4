@@ -7,7 +7,7 @@ import { PaymentControllers } from "./payment.controller";
 
 const router = Router();
 
-// 1. POST: Initialize stripe checkout screen links
+// Initialize stripe checkout links
 router.post(
   "/create",
   auth(),
@@ -15,7 +15,7 @@ router.post(
   PaymentControllers.createPaymentIntent,
 );
 
-// 2. POST: Complete verification loop on return redirect
+// Complete verification 
 router.post(
   "/confirm",
   auth(),
@@ -23,10 +23,10 @@ router.post(
   PaymentControllers.confirmPayment,
 );
 
-// 3. GET: Fetch transaction ledger for active user session
+// GET: Show all past transactions for a user
 router.get("/history", auth(), PaymentControllers.getUserPaymentHistory);
 
-// 4. GET: Show standalone confirmation invoice log entry
+// Get details of a specific transaction
 router.get("/:id", auth(), PaymentControllers.getPaymentDetails);
 
 export const paymentRoutes = router;

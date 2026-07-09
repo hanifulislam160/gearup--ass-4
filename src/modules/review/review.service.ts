@@ -8,7 +8,7 @@ const createReviewInDB = async (
 ) => {
     const { gearItemId, rating, comment } = payload;
 
-    // 1. Verify that this customer actually rented this specific gear item and returned it
+    // Verify that this customer actually rented this specific gear item and returned it
     const completedOrder = await prisma.rentalOrder.findFirst({
         where: {
             customerId: customerId,
@@ -23,7 +23,7 @@ const createReviewInDB = async (
         );
     }
 
-    // 2. Prevent duplicate reviews for the same order if needed (Optional but highly recommended)
+    // 2. Prevent duplicate reviews for the same order 
     const existingReview = await prisma.review.findFirst({
         where: {
             customerId,
@@ -35,7 +35,7 @@ const createReviewInDB = async (
         throw new Error('You have already submitted a review for this gear item!');
     }
 
-    // 3. Create the review inside the database
+    // Create the review inside the database
     const result = await prisma.review.create({
         data: {
             customerId,

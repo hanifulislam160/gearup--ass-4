@@ -1,12 +1,11 @@
 import { OrderStatus } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
 
-// 1. View incoming rental orders belonging to the provider's gears
+// View incoming rental orders belonging to the provider's gears
 const getProviderIncomingOrdersFromDB = async (providerId: string) => {
   const result = await prisma.rentalOrder.findMany({
     where: {
       gearItem: {
-        // Assuming your GearItem schema connects to a provider or owner id field
         providerId: providerId,
       },
     },
@@ -37,7 +36,7 @@ const updateProviderOrderStatusInDB = async (
   providerId: string,
   status: OrderStatus,
 ) => {
-  // 1. Verify that the rental order exists and belongs to a gear item owned by this provider
+  
   const existingOrder = await prisma.rentalOrder.findFirst({
     where: {
       id: orderId,

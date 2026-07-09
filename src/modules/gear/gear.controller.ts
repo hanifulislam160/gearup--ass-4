@@ -35,7 +35,7 @@ const getAllGears = catchAsync(async (req: Request, res: Response) => {
             page: result.meta.page,
             limit: result.meta.limit,
             total: result.meta.total,
-            totalPages: totalPages, // আপনার TMeta টাইপ ম্যাচ করার জন্য
+            totalPages: totalPages,
         },
     });
 });

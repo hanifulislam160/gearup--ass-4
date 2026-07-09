@@ -5,7 +5,7 @@ import { RentalOrderServices } from "./rentalOrder.service";
 import httpStatus from "http-status";
 
 const createRentalOrder = catchAsync(async (req: Request, res: Response) => {
-  const customerId = req.user?.id; // Extracted safely from decoded token session
+  const customerId = req.user?.id;
   const result = await RentalOrderServices.createRentalOrderInDB(
     customerId as string,
     req.body,

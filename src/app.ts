@@ -27,7 +27,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/api/user", userRoutes);
 
-app.use('/api/profile', profileRoutes);
+app.use("/api/profile", profileRoutes);
 
 app.use("/api/auth", authRoutes);
 
@@ -44,8 +44,6 @@ app.use("/api/payment", paymentRoutes);
 app.use("/api/reviews", reviewRoutes);
 
 app.use("/api/admin", adminRoutes);
-
-
 
 // not found route handler
 app.use(notFound);

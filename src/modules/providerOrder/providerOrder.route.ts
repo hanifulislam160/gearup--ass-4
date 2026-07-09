@@ -3,20 +3,21 @@ import { auth } from "../../middlewares/auth";
 import { validateRequest } from "../../middlewares/validateRequest";
 import { ProviderOrderControllers } from "./providerOrder.controller";
 import { ProviderOrderValidations } from "./providerOrder.validation";
+import { Role } from "../../../generated/prisma/enums";
 
 const router = Router();
 
-// 1. GET: Fetch incoming orders for provider
+// 1. incoming orders for provider
 router.get(
   "/orders",
-  auth("PROVIDER"), // Add role gating protection if your auth middleware accepts it
+  auth(Role.PROVIDER),
   ProviderOrderControllers.getProviderIncomingOrders,
 );
 
-// 2. PATCH: Update specific order state markers
+// Update specific order status
 router.patch(
   "/orders-status/:id",
-  auth("PROVIDER"),
+  auth(Role.PROVIDER),
   validateRequest(ProviderOrderValidations.updateOrderStatusValidationSchema),
   ProviderOrderControllers.updateProviderOrderStatus,
 );
