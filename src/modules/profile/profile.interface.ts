@@ -1,5 +1,5 @@
 export interface IProfileUpdatePayload {
-    name?: string; // Stored directly within the primary User model table
+    name?: string;
     photo?: string;
     bio?: string;
     phone?: string;
