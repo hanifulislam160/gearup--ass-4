@@ -1,70 +1,69 @@
-import { prisma } from '../../lib/prisma';
+import { prisma } from "../../lib/prisma";
 
-// 1. GET /api/admin/users
+// GET /api/admin/users
 const getAllUsersFromDB = async () => {
-    return await prisma.user.findMany({
-        omit: {
-            password: true,
-        },
-        orderBy: { createdAt: 'desc' },
-    });
+  return await prisma.user.findMany({
+    omit: {
+      password: true,
+    },
+    orderBy: { createdAt: "desc" },
+  });
 };
 
-// 2. PATCH /api/admin/users/:id
+// PATCH /api/admin/users/:id
 const updateUserStatusInDB = async (
-    userId: string,
-    isSuspended: boolean,
-    reason?: string
+  userId: string,
+  isSuspended: boolean,
+  reason?: string,
 ) => {
-    // Check if target user exists before updating status matrices
-    const userExists = await prisma.user.findUnique({
-        where: { id: userId },
-    });
+  // Check if target user exists before updating status
+  const userExists = await prisma.user.findUnique({
+    where: { id: userId },
+  });
 
-    if (!userExists) {
-        throw new Error('Target user account not found!');
-    }
+  if (!userExists) {
+    throw new Error("Target user account not found!");
+  }
 
-    return await prisma.user.update({
-        where: { id: userId },
-        data: {
-            isSuspended,
-            //  If user is being unsuspended, we can clear the reason, otherwise save it
-            suspensionReason: isSuspended ? reason : null,
-        },
-        omit: {
-            password: true, // Keeping password hidden on return response
-        }
-    });
+  return await prisma.user.update({
+    where: { id: userId },
+    data: {
+      isSuspended,
+      suspensionReason: isSuspended ? reason : null,
+    },
+    omit: {
+      password: true,
+    },
+  });
 };
 
-// 3. GET /api/admin/gear
+//  GET /api/admin/gear
 const getAllGearListingsFromDB = async () => {
-    return await prisma.gearItem.findMany({
-        include: {
-            category: true,
-        },
-        orderBy: { createdAt: 'desc' },
-    });
+  return await prisma.gearItem.findMany({
+    include: {
+      category: true,
+    },
+    orderBy: { createdAt: "desc" },
+  });
 };
 
-// 4. GET /api/admin/rentals
+//  GET /api/admin/rentals
 const getAllRentalOrdersFromDB = async () => {
-    return await prisma.rentalOrder.findMany({
-        include: {
-            customer: {
-                select: { id: true, name: true, email: true },
-            },
-            gearItem: true,
-            payments: true,
-        },
-        orderBy: { createdAt: 'desc' },
-    });
+  return await prisma.rentalOrder.findMany({
+    include: {
+      customer: {
+        select: { id: true, name: true, email: true },
+      },
+      gearItem: true,
+      payments: true,
+    },
+    orderBy: { createdAt: "desc" },
+  });
 };
 
 export const AdminServices = {
-    getAllUsersFromDB,
-    updateUserStatusInDB,
-    getAllGearListingsFromDB,
-    getAllRentalOrdersFromDB,
+  getAllUsersFromDB,
+  updateUserStatusInDB,
+  getAllGearListingsFromDB,
+  getAllRentalOrdersFromDB,
 };

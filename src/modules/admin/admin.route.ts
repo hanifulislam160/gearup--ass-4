@@ -7,9 +7,10 @@ import { Role } from '../../../generated/prisma/enums';
 
 const router = Router();
 
-// Gated behind ADMIN authorization validation middleware across all route streams
+// ADMIN authorization show all users
 router.get('/users', auth('ADMIN'), AdminControllers.getAllUsers);
 
+// user sespened
 router.patch(
     '/users/:id',
     auth(Role.ADMIN),
@@ -17,8 +18,10 @@ router.patch(
     AdminControllers.updateUserStatus
 );
 
+// show all gear
 router.get('/gear', auth(Role.ADMIN), AdminControllers.getAllGearListings);
 
+// show all rentall orders
 router.get('/rentals', auth(Role.ADMIN), AdminControllers.getAllRentalOrders);
 
 export const adminRoutes = router;

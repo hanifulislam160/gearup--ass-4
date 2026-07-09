@@ -6,12 +6,16 @@ import { auth } from "../../middlewares/auth";
 
 const router = Router();
 
-// router.post('/register', userController.registerUser);
+// register api with zod validation
+
 router.post(
   "/register",
   validateRequest(UserValidations.registerUserValidationSchema),
   userController.registerUser,
 );
+
+// authenticated user
+
 router.get("/me", auth(), userController.getUserMe);
 
 export const userRoutes = router;

@@ -23,7 +23,7 @@ const registerIntoDB = async (payload: IRegisterUserPayload) => {
     Number(config.bcrypt_salt_rounds) || 10,
   );
 
-  // Create user without returning password
+  // Create user without password
   const result = await prisma.user.create({
     data: {
       name,
