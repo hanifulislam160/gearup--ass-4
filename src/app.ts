@@ -1,4 +1,6 @@
 import express, { Application, Request, Response } from "express";
+import swaggerUi from "swagger-ui-express";
+import { swaggerDocument } from "./config/swagger";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { userRoutes } from "./modules/user/user.route";
@@ -44,6 +46,8 @@ app.use("/api/payment", paymentRoutes);
 app.use("/api/reviews", reviewRoutes);
 
 app.use("/api/admin", adminRoutes);
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // not found route handler
 app.use(notFound);

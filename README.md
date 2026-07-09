@@ -17,7 +17,7 @@ A robust, role-based Gear Rental and Management Platform built with **TypeScript
 ## 👤 Admin Credentials
 
 ```
-Email: admin@gmail.com
+Email: haniful@gmail.com
 Password: 123456
 ```
 
