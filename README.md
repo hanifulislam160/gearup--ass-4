@@ -2,20 +2,24 @@
 
 A robust, role-based Gear Rental and Management Platform built with **TypeScript, Node.js, Express, Prisma, and PostgreSQL**. The system supports secure multi-role registration, strict inventory controls, dynamic order placement, review validation, and integrated transactional flow tracking.
 
----
+## 🔗 Project Links
 
-## 🔗 Project Links & Credentials
-
-| Resource           | Link / Value                                                                                           |
-| ------------------ | ------------------------------------------------------------------------------------------------------ |
-| **Backend Repo**   | [https://github.com/your-username/rentnest-backend](https://github.com/your-username/rentnest-backend) |
-| **Live API**       | [https://rentnest-api.vercel.app](https://rentnest-api.vercel.app)                                     |
-| **API Docs**       | [https://documenter.getpostman.com/view/xxx](https://documenter.getpostman.com/view/xxx)               |
-| **Demo Video**     | [https://drive.google.com/file/d/xxx/view](https://drive.google.com/file/d/xxx/view)                   |
-| **Admin Email**    | `admin@rentnest.com`                                                                                   |
-| **Admin Password** | `admin123`                                                                                             |
+| Resource               | Link                                                                   |
+| ---------------------- | ---------------------------------------------------------------------- |
+| **Backend Repository** | https://github.com/hanifulislam160/gearup--ass-4                       |
+| **Live API**           | https://gearup-assignment-seven.vercel.app                             |
+| **API Documentation**  | https://drive.google.com/file/d/1fEYqkI7eT-8AZscIXm4RTE883bwQOxAn/view |
+| **Demo Video**         | https://app.usebubbles.com/BD95SP5vPp6MXBcG97NZw/gearup-backend        |
+| **Database Schema**    | https://drawsql.app/teams/topper/diagrams/gearup-databse-schema        |
 
 ---
+
+## 👤 Admin Credentials
+
+```
+Email: admin@gmail.com
+Password: 123456
+```
 
 ## Key Implementations & Features
 
