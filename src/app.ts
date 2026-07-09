@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.get("/", (req: Request, res: Response) => {
-  res.json({ message: "Hello World!" });
+  res.json({ message: "Welcome! Gearup Backend Project" });
 });
 
 app.use("/api/user", userRoutes);
