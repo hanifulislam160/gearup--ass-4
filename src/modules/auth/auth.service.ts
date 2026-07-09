@@ -11,11 +11,15 @@ import { LoginUserPayload } from "./auth.interface";
 const loginUser = async (payload: LoginUserPayload) => {
     const { email, password } = payload;
 
-    const user = await prisma.user.findUniqueOrThrow({
-        where: {
-            email,
-        },
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
     });
+
+    if (!user) {
+      throw new Error("Invalid email or password. Please try again!");
+    }
 
     // check your account is suspended or not
     if (user.isSuspended) {
