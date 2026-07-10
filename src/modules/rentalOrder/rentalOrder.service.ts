@@ -1,12 +1,15 @@
+import { OrderStatus, PaymentStatus } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
 import { ICreateRentalOrderPayload } from "./rentalOrder.interface";
 
 // Create a new rental order
+// import { OrderStatus, PaymentStatus } from "@prisma/client";
+
 const createRentalOrderInDB = async (
   customerId: string,
   payload: ICreateRentalOrderPayload,
 ) => {
-  // Fetch the gear item
+  // 1. Fetch the gear item
   const gearItem = await prisma.gearItem.findUnique({
     where: { id: payload.gearItemId },
   });
@@ -15,6 +18,7 @@ const createRentalOrderInDB = async (
     throw new Error("Gear item not found!");
   }
 
+  // 2. Just check if stock is available, do NOT deduct stock yet
   const requestedQuantity = payload.quantity || 1;
   if (gearItem.stock < requestedQuantity || !gearItem.isAvailable) {
     throw new Error(
@@ -22,35 +26,21 @@ const createRentalOrderInDB = async (
     );
   }
 
-
-  const result = await prisma.$transaction(async (tx) => {
-    // Create the new rental order with quantity
-    const rentalOrder = await tx.rentalOrder.create({
-      data: {
-        gearItemId: payload.gearItemId,
-        startDate: new Date(payload.startDate),
-        endDate: new Date(payload.endDate),
-        totalPrice: payload.totalPrice,
-        quantity: requestedQuantity,
-        customerId: customerId,
-      },
-    });
-
-    // stock calculation
-    const newStock = gearItem.stock - requestedQuantity;
-
-    await tx.gearItem.update({
-      where: { id: payload.gearItemId },
-      data: {
-        stock: newStock,
-        isAvailable: newStock > 0,
-      },
-    });
-
-    return rentalOrder;
+  // 3. Create the new rental order with default PLACED status (No $transaction needed here)
+  const rentalOrder = await prisma.rentalOrder.create({
+    data: {
+      gearItemId: payload.gearItemId,
+      startDate: new Date(payload.startDate),
+      endDate: new Date(payload.endDate),
+      totalPrice: payload.totalPrice,
+      quantity: requestedQuantity,
+      customerId: customerId,
+      status: OrderStatus.PLACED,        // Explicitly passing or relies on schema default
+      paymentStatus: PaymentStatus.PENDING,
+    },
   });
 
-  return result;
+  return rentalOrder;
 };
 
 //  Get logged-in user's rental orders
@@ -58,7 +48,7 @@ const createRentalOrderInDB = async (
 const getUserRentalOrdersFromDB = async (customerId: string) => {
   const result = await prisma.rentalOrder.findMany({
     where: {
-      customerId, 
+      customerId,
     },
     include: {
       gearItem: true,
@@ -78,7 +68,7 @@ const getRentalOrderDetailsFromDB = async (
     include: {
       gearItem: true,
       customer: {
-        select: { id: true, name: true, email: true }, 
+        select: { id: true, name: true, email: true },
       },
     },
   });
@@ -89,7 +79,7 @@ const getRentalOrderDetailsFromDB = async (
 
   // ensure user can only view their own rental orders
   if (result.customerId !== customerId) {
-  
+
     throw new Error("You are not authorized to view this rental order!");
   }
 

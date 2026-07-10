@@ -5,10 +5,10 @@ import {
   IConfirmPaymentPayload,
 } from "./payment.interface";
 import config from "../../config";
-import { OrderStatus } from "../../../generated/prisma/enums";
+import { OrderStatus, PaymentStatus } from "../../../generated/prisma/enums";
 
 // Initialize stripe
-const stripe = new Stripe(config.stripe_secret_key);
+const stripe = new Stripe(config.stripe_secret_key as string);
 
 const createPaymentIntentInDB = async (
   customerId: string,
@@ -27,11 +27,11 @@ const createPaymentIntentInDB = async (
     throw new Error("You are not authorized to pay for this rental order!");
   }
 
-  if (rentalOrder.paymentStatus === "PAID") {
+  if (rentalOrder.paymentStatus === PaymentStatus.PAID) {
     throw new Error("This rental order has already been paid for!");
   }
 
-  // Stripe Checkout Session
+  // Generate Stripe Checkout Session
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
     mode: "payment",
@@ -65,7 +65,7 @@ const createPaymentIntentInDB = async (
   };
 };
 
-// Confirm/verify payment 
+// Confirm and verify payment status, then update order state and deduct inventory stock
 const confirmPaymentInDB = async (payload: IConfirmPaymentPayload) => {
   const { sessionId } = payload;
 
@@ -74,38 +74,61 @@ const confirmPaymentInDB = async (payload: IConfirmPaymentPayload) => {
 
   if (session.payment_status === "paid") {
     const result = await prisma.$transaction(async (tx) => {
+      // Find the rental order using transactionId along with its associated gear item details
       const rentalOrder = await tx.rentalOrder.findUnique({
         where: { transactionId: sessionId },
+        include: { gearItem: true },
       });
 
       if (!rentalOrder) {
-        throw new Error(
-          "No associated rental order found for this payment session!",
-        );
+        throw new Error("No associated rental order found for this payment session!");
       }
 
-      // Update order status
-      await tx.rentalOrder.update({
-        where: { id: rentalOrder.id },
+      // Safeguard: If already marked as PAID due to webhook concurrency, skip duplicate execution
+      if (rentalOrder.paymentStatus === PaymentStatus.PAID) {
+        return { message: "Payment already processed previously." };
+      }
+
+      // Final real-time validation: Ensure items are still available in inventory stock before completing payment adjustments
+      if (rentalOrder.gearItem.stock < rentalOrder.quantity || !rentalOrder.gearItem.isAvailable) {
+        throw new Error("Inventory depleted! The item went out of stock right before payment confirmation.");
+      }
+
+      // Calculate the remaining inventory assets volume
+      const newStock = rentalOrder.gearItem.stock - rentalOrder.quantity;
+
+      // Update the gear item stock records and availability boolean safely inside transaction scope
+      await tx.gearItem.update({
+        where: { id: rentalOrder.gearItemId },
         data: {
-          paymentStatus: "PAID",
-          status: OrderStatus.COMPLETED,
+          stock: newStock,
+          isAvailable: newStock > 0,
         },
       });
 
+      // Update rental order statuses: paymentStatus shifts to PAID, and status transitions to OrderStatus.PAID
+      const updatedOrder = await tx.rentalOrder.update({
+        where: { id: rentalOrder.id },
+        data: {
+          paymentStatus: PaymentStatus.PAID,
+          status: OrderStatus.PAID,
+        },
+      });
+
+      // Create a persistent transaction log entry inside payment collection model mapping values
       const paymentRecord = await tx.payment.create({
         data: {
           rentalOrderId: rentalOrder.id,
           amount: rentalOrder.totalPrice,
           transactionId: sessionId,
-          method: "CARD", 
-          provider: "STRIPE", 
-          status: "PAID",
+          method: "CARD",
+          provider: "STRIPE",
+          status: PaymentStatus.PAID,
           paidAt: new Date(),
         },
       });
 
-      return paymentRecord;
+      return { paymentRecord, updatedOrder };
     });
 
     return result;

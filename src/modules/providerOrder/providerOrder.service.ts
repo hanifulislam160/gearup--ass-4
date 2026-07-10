@@ -1,4 +1,4 @@
-import { OrderStatus } from "../../../generated/prisma/enums";
+import { OrderStatus, PaymentStatus } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
 
 // View incoming rental orders belonging to the provider's gears
@@ -36,7 +36,7 @@ const updateProviderOrderStatusInDB = async (
   providerId: string,
   status: OrderStatus,
 ) => {
-  
+  // 1. Fetch the order and verify the provider owns the associated gear item
   const existingOrder = await prisma.rentalOrder.findFirst({
     where: {
       id: orderId,
@@ -52,26 +52,15 @@ const updateProviderOrderStatusInDB = async (
     );
   }
 
-  // 2. Payment Verification Guard: Prevent status changes (except CANCELLED) if payment is not complete
-  if (status !== OrderStatus.CANCELLED && existingOrder.paymentStatus !== 'PAID') {
+  // 2. Simple Check: Provider can only update status if payment status is PAID
+  if (existingOrder.paymentStatus !== PaymentStatus.PAID) {
     throw new Error(
-      'Cannot progress order status until the customer has completed the payment!',
+      'You cannot update the status of this order until the customer completes the payment!',
     );
   }
 
-  if (status === OrderStatus.CONFIRMED && existingOrder.status !== OrderStatus.PENDING) {
-    throw new Error('Order is already processed beyond pending state!');
-  }
 
-  if (status === OrderStatus.ON_GOING && existingOrder.status !== OrderStatus.CONFIRMED) {
-    throw new Error('Order must be CONFIRMED before marking it as ON_GOING!');
-  }
-
-  if (status === OrderStatus.COMPLETED && existingOrder.status !== OrderStatus.ON_GOING) {
-    throw new Error('Order must be ON_GOING (picked up) before marking it as COMPLETED!');
-  }
-
-  // 4. Update order status in the database
+  // 4. Update order status in the database directly
   const updatedOrder = await prisma.rentalOrder.update({
     where: { id: orderId },
     data: { status },
@@ -79,7 +68,6 @@ const updateProviderOrderStatusInDB = async (
 
   return updatedOrder;
 };
-
 
 
 export const ProviderOrderServices = {

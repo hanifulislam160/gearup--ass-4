@@ -26,11 +26,10 @@ export const validateRequest = (schema: AnyZodObject) => {
         cookies: req.cookies,
       });
 
-      // ✅ সেফ অ্যাসাইনমেন্ট: জড স্কিমাতে ডিফাইন করা না থাকলেও এক্সপ্রেসের মূল ডাটা হারাবে না
+      
       req.body = parsed.body || req.body;
-      req.params = parsed.params || req.params; // 👈 এই লাইনটি নিশ্চিত করবে req.params যেন undefined না হয়
+      req.params = parsed.params || req.params;
 
-      // Express-এর read-only req.query হ্যান্ডেল করার লজিক
       if (parsed.query) {
         Object.keys(req.query).forEach((key) => {
           delete req.query[key];

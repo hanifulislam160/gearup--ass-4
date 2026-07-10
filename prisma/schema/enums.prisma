@@ -1,16 +1,17 @@
 enum Role {
-    CUSTOMER
-    PROVIDER
-    ADMIN
+  CUSTOMER
+  PROVIDER
+  ADMIN
 }
 
-
 enum OrderStatus {
-  PENDING
+  PLACED
   CONFIRMED
-  ON_GOING   
-  COMPLETED  
+  PAID
+  PICKED_UP
+  RETURNED
   CANCELLED
+  REJECTED
 }
 
 enum PaymentStatus {
